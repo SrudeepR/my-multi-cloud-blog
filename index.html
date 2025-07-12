@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Free Multi-Cloud Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        p { line-height: 1.6; }
+        #analytics-status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Free Multi-Cloud Blog!</h1>
+    <p>This is a super basic blog hosted on Azure Static Web Apps.</p>
+    <p>The page view analytics are handled by a Google Cloud Function!</p>
+    <div id="analytics-status">Loading analytics...</div>
+
+    <script>
+        // This will be replaced later with your actual Google Cloud Function URL
+        const GOOGLE_CLOUD_FUNCTION_URL = 'https://us-west1-my-free-multi-cloud.cloudfunctions.net/recordPageView';
+
+        async function recordPageView() {
+            const statusDiv = document.getElementById('analytics-status');
+            try {
+                statusDiv.textContent = 'Recording page view...';
+                const response = await fetch(GOOGLE_CLOUD_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // You can send data if needed, e.g., { page: window.location.pathname }
+                    body: JSON.stringify({ page: 'homepage' })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    statusDiv.textContent = `Page view recorded! Message: ${data.message}`;
+                } else {
+                    statusDiv.textContent = `Error recording page view: ${data.error || data.message}`;
+                }
+            } catch (error) {
+                statusDiv.textContent = `Failed to connect to analytics service`;
+                console.error('Error:', error); // Log the full error for debugging
+            }
+        }
+
+        // Record a page view when the page loads
+        window.addEventListener('load', recordPageView);
+    </script>
+</body>
+</html>

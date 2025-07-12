@@ -1,0 +1,2 @@
+cd "D:\Jain University\Semester 3\Subjects\Summer Internship\my-multi-cloud-blog"
+git push origin main
